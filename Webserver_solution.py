@@ -1,5 +1,5 @@
 #Alemayehu Abebe
-#Ama870@nyu.edu
+#
 # import socket module
 from socket import *
 # In order to terminate the program
