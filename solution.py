@@ -118,10 +118,10 @@ def ping(host, timeout=1):
     # timeout=1 means: If one second goes by without a reply from the server,
     # the client assumes that either the client's ping or the server's pong is lost
     dest = gethostbyname(host)
-    print("Pinging " + dest + " using Python:")
-    print("")
+    #print("Pinging " + dest + " using Python:")
+    #print("")
     #Calculate Vars Values and return them
-    vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8))]#,
+    #vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8))]#,
             #str(round(stdev(stdev_var), 8))]
     # Send ping requests to a server separated by approximately one second
     # Add something here to collect the delays of each ping in a list so you can calculate vars after your ping
@@ -130,29 +130,26 @@ def ping(host, timeout=1):
     for i in range(0, 4):  # Four pings will be sent (loop runs for i=0, 1, 2, 3)
         delay = doOnePing(dest, timeout)
 
-        print('RTT:', lst.append(delay))
-        print (lst)
-        #lst.append(delay)
-        print('maxRTT:', (max(lst) if len(lst) > 0 else 0),
-              '\tminRTT:', (min(lst) if len(lst) > 0 else 0),
-              '\naverageRTT:', float((sum(lst)
-                                      / len(lst) if len(lst) > 0 else float('nan'))))
-        #print(lst.append(delay)
+        #print('RTT:', lst.append(delay))
+        lst.append(delay)
+
 
         time.sleep(1)  # one second
 
+        packet_max = (max(lst) * 1000 if len(lst) > 0 else 0)
+        packet_min = (min(lst) * 1000 if len(lst) > 0 else 0)
+        packet_avg = float(((sum(lst) / len(lst)) * 1000) if len(lst) > 0 else float('nan'))
+        #print(lst.append(delay)
 
-    # You should have the values of delay for each ping here; fill in calculation for packet_min, packet_avg, packet_max, and stdev
+        # You should have the values of delay for each ping here; fill in calculation for packet_min, packet_avg, packet_max, and stdev
     #if len(lst) > 0:
     #    packet_min  = min (lst)*1000
         #packet_avg = sum (lst)/len(lst))*1000
      #   packet_max = max (lst) *1000
         vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)),
                 str(round(packet_max, 8))]  # ,str(round(stdev(stdev_var), 8))]
-    #lse:
-     #   vars = ['0','0.0','0','0.0']
-
-
+        #print (vars)
+    #else:
 
     return vars
 
