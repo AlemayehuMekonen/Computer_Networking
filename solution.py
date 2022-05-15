@@ -4,10 +4,11 @@ import sys
 import struct
 import time
 import select
-from statistics import mean, median, mode, stdev
+from statistics import mean, stdev
 
 #import binascii
-timeRTT = []
+#lst= []
+timeRTT = 0
 packet_min = 0
 packet_avg = 0
 packet_max = 0
@@ -59,6 +60,13 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         icmpHeader = recPacket[20:28]
         # Fetch the ICMP header from the IP packet
         icmpType, code, mychecksum, packetID, sequence = struct.unpack("bbHHh", icmpHeader)
+
+        if icmpType != 8 and packetID == ID:
+            bytesInDouble = struct.calcsize("d")
+        timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
+        return timeReceived - timeSent
+
+
         # Fill in end
         timeLeft = timeLeft - howLongInSelect
         if timeLeft <= 0:
@@ -117,20 +125,34 @@ def ping(host, timeout=1):
             #str(round(stdev(stdev_var), 8))]
     # Send ping requests to a server separated by approximately one second
     # Add something here to collect the delays of each ping in a list so you can calculate vars after your ping
-
+    lst = []
+    count= 0
     for i in range(0, 4):  # Four pings will be sent (loop runs for i=0, 1, 2, 3)
         delay = doOnePing(dest, timeout)
-        print('RTT:', delay)
-        print('maxRTT:', (max(timeRTT) if len(timeRTT) > 0 else 0),
-              '\tminRTT:', (min(timeRTT) if len(timeRTT) > 0 else 0),
-              '\naverageRTT:', float((sum(timeRTT)
-                                      / len(timeRTT) if len(timeRTT) > 0 else float('nan'))))
-        print(delay)
+
+        print('RTT:', lst.append(delay))
+        print (lst)
+        #lst.append(delay)
+        print('maxRTT:', (max(lst) if len(lst) > 0 else 0),
+              '\tminRTT:', (min(lst) if len(lst) > 0 else 0),
+              '\naverageRTT:', float((sum(lst)
+                                      / len(lst) if len(lst) > 0 else float('nan'))))
+        #print(lst.append(delay)
 
         time.sleep(1)  # one second
 
+
     # You should have the values of delay for each ping here; fill in calculation for packet_min, packet_avg, packet_max, and stdev
-    # vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8)),str(round(stdev(stdev_var), 8))]
+    #if len(lst) > 0:
+    #    packet_min  = min (lst)*1000
+        #packet_avg = sum (lst)/len(lst))*1000
+     #   packet_max = max (lst) *1000
+        vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)),
+                str(round(packet_max, 8))]  # ,str(round(stdev(stdev_var), 8))]
+    #lse:
+     #   vars = ['0','0.0','0','0.0']
+
+
 
     return vars
 
